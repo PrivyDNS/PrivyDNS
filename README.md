@@ -107,14 +107,14 @@ To publish this project to PyPI, follow these steps:
    Ensure you have the latest versions of `setuptools`, `wheel`, and `twine` installed.
 
    ```bash
-   pip install --upgrade setuptools wheel twine
+   pip install --upgrade setuptools wheel twine build
    ```
 
 2. **Build the Distribution Files**
    Run the following command to build the source distribution (`.tar.gz`) and the wheel distribution (`.whl`).
 
    ```bash
-   python setup.py sdist bdist_wheel
+   python -m build
    ```
 
    The distribution files will be available in the `dist` directory.
