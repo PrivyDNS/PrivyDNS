@@ -1,4 +1,4 @@
-# PrivyDNS
+# PrivyDNS [![Python Test Suite](https://github.com/PrivyDNS/PrivyDNS/actions/workflows/python-tests.yml/badge.svg)](https://github.com/PrivyDNS/PrivyDNS/actions/workflows/python-tests.yml)
 
 ![Pytest](https://img.shields.io/badge/pytest-%23ffffff.svg?style=flat-square&logo=pytest&logoColor=2f9fe3)
 ![Python](https://img.shields.io/badge/python-3670A0?style=flat-square&logo=python&logoColor=ffdd54)
