@@ -1,0 +1,8 @@
+services:
+    python-tests:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: python-pipeline-tests
+        environment:
+            PYTHONUNBUFFERED: "1"
