@@ -7,3 +7,4 @@ services:
         environment:
             PYTHONUNBUFFERED: "1"
         network_mode: "bridge"
+#        entrypoint: ["pytest", "-s", "--log-level=DEBUG"] # Uncomment to run tests with logging

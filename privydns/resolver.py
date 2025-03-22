@@ -82,26 +82,33 @@ class DoHHandler(DNSProtocolHandler):
             logger.info(f"Cache hit for {cache_key}")
             return cache[cache_key]
 
+        logger.debug(f"DoH query for {domain} ({record_type}) to server {self.server}")
         query = dns.message.make_query(domain, record_type)
+        logger.debug(f"Created DNS query message with ID: {query.id}")
 
         for attempt in range(1, retries + 1):
             try:
+                logger.debug(f"DoH attempt {attempt}/{retries} for {domain}")
                 async with httpx.AsyncClient() as client:
                     response = await client.post(
                         self.server,
                         data=query.to_wire(),
                         headers={"Content-Type": "application/dns-message"},
                     )
+                    logger.debug(f"DoH response status: {response.status_code}")
+
                     if response.status_code == 200:
-                        result = dns.message.from_wire(response.content).answer
-                        cache[cache_key] = result
-                        logger.info(f"DoH query success for {domain} (attempt {attempt})")
-                        return result
-                    logger.warning(f"DoH query failed for {domain} (attempt {attempt})")
+                        dns_response = dns.message.from_wire(response.content)
+                        logger.debug(f"DoH response parsed successfully, answer records: {len(dns_response.answer)}")
+                        cache[cache_key] = dns_response.answer
+                        return dns_response.answer
 
+                    logger.warning(f"DoH query failed with status {response.status_code} (attempt {attempt})")
             except Exception as e:
-                logger.error(f"DoH query error: {e} (attempt {attempt})")
+                logger.error(f"DoH query error on attempt {attempt}: {e}")
+                logger.debug(f"Exception details: {type(e).__name__}", exc_info=True)
 
+        logger.error(f"All DoH query attempts failed for {domain}")
         raise DNSQueryError(f"Failed DoH query after {retries} attempts")
 
 class DoTHandler(DNSProtocolHandler):
@@ -155,18 +162,23 @@ class DoTHandler(DNSProtocolHandler):
         ssl_context = ssl.create_default_context()
 
         logger.debug(f"Attempting DoT query to {self.server}:{self.port} for {domain} ({record_type})")
+        logger.debug(f"Created DNS query message with ID: {query.id}")
 
         for attempt in range(1, retries + 1):
             try:
+                logger.debug(f"DoT attempt {attempt}/{retries} for {domain}")
                 response = await asyncio.to_thread(
-                    dns.query.tls, query, self.server, port=self.port, ssl_context=ssl_context, server_hostname=self.server
+                    dns.query.tls, query, self.server, port=self.port,
+                    ssl_context=ssl_context, server_hostname=self.server
                 )
-                logger.debug(f"DoT query response: {response}")
+                logger.debug(f"DoT query successful, answer records: {len(response.answer)}")
                 cache[cache_key] = response.answer
                 return response.answer
             except Exception as e:
                 logger.error(f"DoT query error on attempt {attempt}: {e}")
+                logger.debug(f"Exception details: {type(e).__name__}", exc_info=True)
 
+        logger.error(f"All DoT query attempts failed for {domain}")
         raise DNSQueryError(f"Failed DoT query after {retries} attempts")
 
 class MTLSHandler(DNSProtocolHandler):
@@ -295,6 +307,10 @@ class DNSResolver:
         self.cache = TTLCache(maxsize=cache_size, ttl=cache_ttl)
         self.retries = retries
 
+        logger.debug(f"Initializing DNSResolver with cache_size={cache_size}, cache_ttl={cache_ttl}, retries={retries}")
+        logger.debug(f"DoH server: {doh_server}")
+        logger.debug(f"DoT server: {dot_server}:{dot_port}")
+
         # Initialize protocol handlers
         self.handlers = {
             "doh": DoHHandler(doh_server),
@@ -303,17 +319,23 @@ class DNSResolver:
 
         # Only add mTLS handler if all required parameters are provided
         if all([mtls_server, certfile, keyfile]):
+            logger.debug(f"mTLS server: {mtls_server}, certfile: {certfile}, keyfile: {keyfile}")
             self.handlers["mtls"] = MTLSHandler(mtls_server, certfile, keyfile)
+        else:
+            logger.debug("mTLS not configured (missing server, certfile, or keyfile)")
 
     async def query(self, domain: str, record_type: str = "A", protocol: str = "doh") -> list:
         """
-        Resolve a DNS query asynchronously for the given domain using the specified protocol.
+        Resolve a DNS query using the specified protocol.
+
+        This method delegates the DNS query to the appropriate protocol handler,
+        with support for caching and automatic retries.
 
         Args:
             domain (str): The domain name to query.
-            record_type (str): The DNS record type (e.g., 'A', 'AAAA', 'MX').
+            record_type (str, optional): The DNS record type (e.g., 'A', 'AAAA', 'MX').
                 Default: "A"
-            protocol (str): The DNS protocol to use ('doh', 'dot', or 'mtls').
+            protocol (str, optional): The DNS protocol to use ('doh', 'dot', 'mtls').
                 Default: "doh"
 
         Returns:
@@ -321,14 +343,25 @@ class DNSResolver:
 
         Raises:
             ValueError: If an invalid protocol is specified.
-            DNSQueryError: If the query fails after all retry attempts.
+            DNSQueryError: If the DNS query fails after all retry attempts.
         """
-        logger.info(f"Resolving {domain} using {protocol}")
+        logger.info(f"Resolving {domain} ({record_type}) using {protocol}")
 
         if protocol not in self.handlers:
-            raise ValueError(f"Invalid protocol. Choose from: {', '.join(self.handlers.keys())}")
+            available_protocols = ", ".join(self.handlers.keys())
+            logger.error(f"Invalid protocol: {protocol}. Available protocols: {available_protocols}")
+            raise ValueError(f"Invalid protocol. Choose from: {available_protocols}")
 
         handler = self.handlers[protocol]
-        return await handler.query(domain, record_type, self.cache, self.retries)
+        logger.debug(f"Using handler: {handler.__class__.__name__}")
+
+        try:
+            result = await handler.query(domain, record_type, self.cache, self.retries)
+            logger.debug(f"Query successful for {domain}, returned {len(result)} records")
+            return result
+        except Exception as e:
+            logger.error(f"Query failed for {domain}: {e}")
+            logger.debug("Exception details:", exc_info=True)
+            raise
 
 

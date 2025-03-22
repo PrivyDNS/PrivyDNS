@@ -5,7 +5,7 @@ from cachetools import TTLCache
 
 from privydns.resolver import DNSResolver, DoHHandler, DoTHandler, MTLSHandler
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def resolver():
     """Fixture to create a DNSResolver instance for testing."""
     return DNSResolver()
@@ -18,11 +18,15 @@ async def test_doh(resolver):
     assert len(response) > 0
 
 @pytest.mark.asyncio
-async def test_dot(resolver):
+@patch('privydns.resolver.dns.query.tls')
+async def test_dot(mock_tls_query, resolver):
     """Test asynchronous DNS over a TLS query."""
+    mock_response = MagicMock()
+    mock_response.answer = ["mock_answer"]
+    mock_tls_query.return_value = mock_response
+
     response = await resolver.query("example.com", protocol="dot")
-    assert response is not None
-    assert len(response) > 0
+    assert response == ["mock_answer"]
 
 @pytest.mark.asyncio
 async def test_invalid_protocol(resolver):
@@ -106,9 +110,10 @@ async def test_doh_handler_retry(mock_client):
         assert mock_client_instance.__aenter__.return_value.post.call_count == 3
 
 @pytest.mark.asyncio
-@patch('asyncio.to_thread')
+@patch('privydns.resolver.dns.query.tls')
 async def test_dot_handler_retry(mock_to_thread):
     """Test that DoT handler retries on failure."""
+
     # Create a TTLCache
     mock_cache = TTLCache(maxsize=100, ttl=300)
 
