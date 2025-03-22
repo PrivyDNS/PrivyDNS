@@ -6,3 +6,4 @@ services:
         container_name: python-pipeline-tests
         environment:
             PYTHONUNBUFFERED: "1"
+        network_mode: "bridge"

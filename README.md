@@ -6,12 +6,13 @@
 ![PyPi](https://img.shields.io/badge/pypi-%23ececec.svg?style=flat-square&logo=pypi&logoColor=1f73b7)
 ![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
 
-**PrivyDNS** is a Python library designed to securely query DNS records over encrypted protocols including DNS over HTTPS (DoH), DNS over TLS (DoT), and DNSCrypt. It supports both **synchronous** and **asynchronous** DNS queries with features such as **caching**, **retry mechanisms**, **logging**, and **encryption**. It provides developers with an easy-to-use interface to enhance DNS security, reliability, and performance.
+**PrivyDNS** is a Python library designed to securely query DNS records over encrypted protocols including DNS over HTTPS (DoH), DNS over TLS (DoT), DNS over Mutual TLS (mTLS), and DNSCrypt. It supports both **synchronous** and **asynchronous** DNS queries with features such as **caching**, **retry mechanisms**, **logging**, and **encryption**. It provides developers with an easy-to-use interface to enhance DNS security, reliability, and performance.
 
 ## Features
 - **Protocols Supported:**
 	- DNS over HTTPS (DoH)
 	- DNS over TLS (DoT)
+    - DNS over Mutual TLS (mTLS)
 	- DNSCrypt
 - **Cache Support**: Caches DNS responses to improve performance.
 - **Retry Mechanism**: Automatically retries failed DNS queries.
@@ -34,23 +35,7 @@ pip install privydns
 
 ## Usage
 
-### Synchronous DNS Query
-
-```python
-from privydns import DNSResolver
-
-resolver = DNSResolver()
-
-# DNS over HTTPS query
-response = resolver.query("example.com", protocol="doh")
-print(response)
-
-# DNS over TLS query
-response = resolver.query("example.com", protocol="dot")
-print(response)
-```
-
-### Asynchronous DNS Query
+### DNS Query
 
 ```python
 import asyncio
@@ -58,7 +43,7 @@ from privydns import DNSResolver
 
 async def main():
     resolver = DNSResolver()
-    response = await resolver.query("example.com", protocol="doh", async_mode=True)
+    response = await resolver.query("example.com", protocol="doh")
     print(response)
 
 asyncio.run(main())
@@ -96,7 +81,7 @@ docker compose build
 To run the tests inside the Docker container, execute the following command:
 
 ```bash
-docker compose run
+docker compose up
 ```
 
 ## Publishing to [PyPI](https://pypi.org)
