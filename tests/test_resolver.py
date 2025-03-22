@@ -21,10 +21,13 @@ async def test_doh(resolver):
 @patch('privydns.resolver.dns.query.tls')
 async def test_dot(mock_tls_query, resolver):
     """Test asynchronous DNS over a TLS query."""
+
+    # Mock the TLS query to return a mock response
     mock_response = MagicMock()
     mock_response.answer = ["mock_answer"]
     mock_tls_query.return_value = mock_response
 
+    # Run the query and assert the response
     response = await resolver.query("example.com", protocol="dot")
     assert response == ["mock_answer"]
 
