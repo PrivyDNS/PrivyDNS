@@ -1,5 +1,4 @@
-from .resolver import DNSResolver
-from .dnscrypt import DNSCryptResolver
+from .resolver import DNSResolver, DoHHandler, DoTHandler, MTLSHandler
 from .exceptions import DNSQueryError
 
-__all__ = ["DNSResolver", "DNSCryptResolver", "DNSQueryError"]
+__all__ = ["DNSResolver", "DNSQueryError"]
