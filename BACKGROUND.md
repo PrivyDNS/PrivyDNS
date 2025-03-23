@@ -1,4 +1,4 @@
-# Understanding DNS Over TLS (DoT), DNS Over HTTPS (DoH), DNS over mTLS, and DNSCrypt
+# Understanding DNS Over TLS (DoT), DNS Over HTTPS (DoH), and DNS over mTLS
 
 ## Introduction
 
@@ -110,50 +110,19 @@ sequenceDiagram
 - **Critical Infrastructure**: Sectors requiring high security can use mTLS to ensure only trusted clients can perform DNS lookups.
 - **Zero Trust Networks**: mTLS aligns with zero trust security models by requiring authentication for every connection.
 
-## What is DNSCrypt?
-
-**DNSCrypt** is a protocol designed to secure DNS traffic between the client and the resolver using encryption. It supports both UDP and TCP transport methods. DNSCrypt encrypts DNS queries and responses, preventing third parties from observing or tampering with DNS traffic.
-
-DNSCrypt allows DNS resolvers to authenticate the source of the DNS response, making sure the responses are from a legitimate source, not a malicious entity.
-
-### How DNSCrypt Works
-
-1. **Client Initiates Query**: The client sends a DNS query to the DNSCrypt resolver.
-2. **Encrypt the Query**: DNSCrypt encrypts the DNS query using strong cryptographic algorithms.
-3. **Send the Query**: The encrypted DNS query is sent over UDP or TCP to the resolver.
-4. **Resolver Responds**: The resolver sends back an encrypted DNS response to the client.
-5. **Decrypt the Response**: The client decrypts the response and receives the DNS result.
-
-### Diagram: DNSCrypt Workflow
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant DNSCrypt Resolver
-    Client->>DNSCrypt Resolver: Sends encrypted DNS query
-    DNSCrypt Resolver->>Client: Sends encrypted DNS response
-    Client->>DNSCrypt Resolver: Decrypts the response
-```
-
-### Benefits of DNSCrypt
-
-- **Strong Encryption**: Provides encryption to protect against eavesdropping.
-- **Authentication**: Ensures that the DNS response comes from a trusted and legitimate source.
-- **Integrity**: Guarantees the DNS query and response have not been tampered with.
-
-## Why Use DoT, DoH, DNSCrypt, or mTLS?
+## Why Use DoT, DoH, or mTLS?
 
 ### 1. **Enhanced Privacy**
-All four protocols — DoT, DoH, mTLS, and DNSCrypt — ensure that DNS queries are encrypted, preventing third parties from monitoring user activity. This protects user privacy by making it difficult for ISPs, hackers, or other entities to track websites visited by a user.
+All four protocols — DoT, DoH, and mTLS — ensure that DNS queries are encrypted, preventing third parties from monitoring user activity. This protects user privacy by making it difficult for ISPs, hackers, or other entities to track websites visited by a user.
 
 ### 2. **Prevent DNS Spoofing and Man-in-the-Middle Attacks**
 Since DNS queries and responses are encrypted, attackers cannot easily intercept or modify DNS traffic. This protects against attacks such as DNS spoofing, where malicious actors inject fraudulent DNS responses.
 
 ### 3. **Bypass Censorship**
-DoH, in particular, is useful for bypassing DNS-level censorship and restrictions. Since it runs over HTTPS (port 443), it is difficult for network filters or firewalls to distinguish it from normal web traffic, making it harder to block.
+DoH, in particular, is useful for bypassing DNS-level censorship and restrictions. Since it runs over HTTPS (port 443), it is challenging for network filters or firewalls to distinguish it from normal web traffic, making it harder to block.
 
 ### 4. **Improved Security**
-DNSCrypt offers authentication, ensuring that the DNS response comes from a legitimate source. mTLS goes further by providing mutual authentication between client and server, ensuring that only authorized clients can access the DNS service. These mechanisms prevent attackers from providing malicious DNS responses or unauthorized access to DNS services.
+mTLS goes further by providing mutual authentication between client and server, ensuring that only authorized clients can access the DNS service. These mechanisms prevent attackers from providing malicious DNS responses or unauthorized access to DNS services.
 
 ### 5. **Access Control**
 mTLS uniquely provides strong access control capabilities, allowing organizations to restrict DNS resolution to only authenticated clients with valid certificates. This is particularly valuable in enterprise environments, critical infrastructure, and zero-trust security models.
@@ -162,11 +131,10 @@ mTLS uniquely provides strong access control capabilities, allowing organization
 - **DoT**: Good general-purpose secure DNS with standard port (853)
 - **DoH**: Excellent for bypassing censorship and blending with web traffic
 - **mTLS**: Ideal for enterprise environments requiring client authentication
-- **DNSCrypt**: Strong for lightweight implementations with authentication
 
 ## Conclusion
 
-DoT, DoH, and DNSCrypt all offer enhanced security, privacy, and integrity for DNS traffic, making them crucial components of a secure internet browsing experience. While DoT and DoH use encryption to protect DNS queries, DNSCrypt adds the layer of authentication, ensuring that responses are legitimate. By implementing these protocols, users and organizations can safeguard their browsing activity from eavesdropping and tampering, improving overall security and privacy online.
+DoT, DoH, and DNS over mTLS all offer enhanced security, privacy, and integrity for DNS traffic, making them crucial parts of a secure internet browsing experience. While DoT and DoH use encryption to protect DNS queries, By implementing these protocols, users and organizations can safeguard their browsing activity from eavesdropping and tampering, improving overall security and privacy online.
 
 ## Further Reading
 

@@ -1,6 +1,6 @@
 # PrivyDNS Architecture
 
-The **PrivyDNS** library provides a robust, secure DNS querying solution with support for DNS over HTTPS (DoH), DNS over TLS (DoT), mutual TLS (mTLS), and DNSCrypt. It incorporates features such as **caching**, **retry mechanisms**, and **logging** to improve performance and reliability.
+The **PrivyDNS** library provides a robust, secure DNS querying solution with support for DNS over HTTPS (DoH), DNS over TLS (DoT), and mutual TLS (mTLS). It incorporates features such as **caching**, **retry mechanisms**, and **logging** to improve performance and reliability.
 
 ## High-Level Architecture
 
@@ -28,10 +28,9 @@ graph LR
    - **DoHHandler**: Sends DNS queries over HTTPS (DoH) using `httpx` to communicate with the DoH server.
    - **DoTHandler**: Sends DNS queries over TLS (DoT) using `dns.query.tls` for secure communication with the DoT server.
    - **MTLSHandler**: Sends DNS queries over mutual TLS (mTLS) with client certificate authentication.
-4. **DNSCryptResolver**: A separate resolver for DNSCrypt protocol that encrypts DNS queries using **NaCl**.
-5. **Cache**: Stores DNS responses temporarily using a TTL-based cache to avoid re-querying the same domain repeatedly.
-6. **Retry Mechanism**: Ensures that failed queries are retried a specified number of times before raising an error.
-7. **Logging**: Provides detailed logs about query operations, errors, cache hits/misses, and retry attempts.
+4. **Cache**: Stores DNS responses temporarily using a TTL-based cache to avoid re-querying the same domain repeatedly.
+5. **Retry Mechanism**: Ensures that failed queries are retried a specified number of times before raising an error.
+6. **Logging**: Provides detailed logs about query operations, errors, cache hits/misses, and retry attempts.
 
 ## API Overview
 
@@ -49,11 +48,6 @@ graph LR
 - **DoHHandler**: Handles DNS over HTTPS queries.
 - **DoTHandler**: Handles DNS over TLS queries.
 - **MTLSHandler**: Handles DNS over mutual TLS queries.
-
-### `DNSCryptResolver`
-- **Purpose**: Resolves DNS queries using DNSCrypt.
-- **Methods**:
-  - `query(domain, record_type)`: Resolves a DNS query using DNSCrypt.
 
 ### **Error Handling**
 - **DNSQueryError**: Custom exception class used to handle DNS-related errors such as query failures.

@@ -6,14 +6,13 @@
 ![PyPi](https://img.shields.io/badge/pypi-%23ececec.svg?style=flat-square&logo=pypi&logoColor=1f73b7)
 ![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)
 
-**PrivyDNS** is a Python library designed to securely query DNS records over encrypted protocols including DNS over HTTPS (DoH), DNS over TLS (DoT), DNS over Mutual TLS (mTLS), and DNSCrypt. It supports both **synchronous** and **asynchronous** DNS queries with features such as **caching**, **retry mechanisms**, **logging**, and **encryption**. It provides developers with an easy-to-use interface to enhance DNS security, reliability, and performance.
+**PrivyDNS** is a Python library designed to securely query DNS records over encrypted protocols including DNS over HTTPS (DoH), DNS over TLS (DoT), and DNS over Mutual TLS (mTLS). It supports both **synchronous** and **asynchronous** DNS queries with features such as **caching**, **retry mechanisms**, **logging**, and **encryption**. It provides developers with an easy-to-use interface to enhance DNS security, reliability, and performance.
 
 ## Features
 - **Protocols Supported:**
 	- DNS over HTTPS (DoH)
 	- DNS over TLS (DoT)
     - DNS over Mutual TLS (mTLS)
-	- DNSCrypt
 - **Cache Support**: Caches DNS responses to improve performance.
 - **Retry Mechanism**: Automatically retries failed DNS queries.
 - **Logging**: Provides detailed logs for better debugging.
@@ -35,7 +34,7 @@ pip install privydns
 
 ## Usage
 
-### DNS Query
+### DNS Query using DoH
 
 ```python
 import asyncio
@@ -47,16 +46,48 @@ async def main():
     print(response)
 
 asyncio.run(main())
+
+# 2025-03-22 07:10:57,479 - INFO - Resolving example.com (A) using doh
+# [<DNS example.com. IN A RRset: [<96.7.128.198>, <96.7.128.175>, <23.192.228.84>, <23.192.228.80>, <23.215.0.138>, <23.215.0.136>]>]
+# 2025-03-22 07:10:57,592 - INFO - HTTP Request: POST https://dns.google/dns-query "HTTP/1.1 200 OK"
 ```
 
-### DNSCrypt Query
+### DNS Query using DoT
 
 ```python
-from privydns import DNSCryptResolver
+import asyncio
+from privydns import DNSResolver
 
-crypt_resolver = DNSCryptResolver()
-response = crypt_resolver.query("example.com")
-print(response)
+async def main():
+    resolver = DNSResolver()
+    response = await resolver.query("example.com", protocol="dot")
+    print(response)
+
+asyncio.run(main())
+
+# 2025-03-22 07:16:47,292 - INFO - Resolving example.com (A) using dot
+# [<DNS example.com. IN A RRset: [<23.215.0.136>, <23.192.228.80>, <23.192.228.84>, <23.215.0.138>, <96.7.128.198>, <96.7.128.175>]>]
+```
+
+### DNS Query using mTLS
+
+```python
+import asyncio
+from privydns import DNSResolver
+
+async def main():
+    resolver = DNSResolver(
+        mtls_server="mtls.example.com",
+        certfile="/path/to/cert.pem",
+        keyfile="/path/to/key.pem"
+    )
+    response = await resolver.query("example.com", protocol="mtls")
+    print(response)
+
+asyncio.run(main())
+
+# 2025-03-22 07:21:07,292 - INFO - Resolving example.com (A) using mtls
+# [<DNS example.com. IN A RRset: [<23.215.0.136>, <23.192.228.80>, <23.192.228.84>, <23.215.0.138>, <96.7.128.198>, <96.7.128.175>]>
 ```
 
 ## Testing

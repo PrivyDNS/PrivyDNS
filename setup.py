@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="PrivyDNS",
-    version="0.1.2",
+    version="0.1.3",
     description="A Python library for secure DNS resolution (DoH, DoT, mTLS) with sync & async support.",
     long_description=long_description,
     long_description_content_type="text/markdown",
