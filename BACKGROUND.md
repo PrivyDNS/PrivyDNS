@@ -113,7 +113,7 @@ sequenceDiagram
 ## Why Use DoT, DoH, or mTLS?
 
 ### 1. **Enhanced Privacy**
-All four protocols — DoT, DoH, and mTLS — ensure that DNS queries are encrypted, preventing third parties from monitoring user activity. This protects user privacy by making it difficult for ISPs, hackers, or other entities to track websites visited by a user.
+All three protocols — DoT, DoH, and mTLS — ensure that DNS queries are encrypted, preventing third parties from monitoring user activity. This protects user privacy by making it difficult for ISPs, hackers, or other entities to track websites visited by a user.
 
 ### 2. **Prevent DNS Spoofing and Man-in-the-Middle Attacks**
 Since DNS queries and responses are encrypted, attackers cannot easily intercept or modify DNS traffic. This protects against attacks such as DNS spoofing, where malicious actors inject fraudulent DNS responses.
