@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The Domain Name System (DNS) is a critical part of the internet infrastructure, translating human-readable domain names into machine-readable IP addresses. Traditionally, DNS queries are transmitted over unencrypted UDP or TCP protocols, making them vulnerable to eavesdropping, tampering, and man-in-the-middle attacks. To address these security concerns, newer protocols such as **DNS Over TLS (DoT)**, **DNS Over HTTPS (DoH)**, and **DNSCrypt** have been introduced. These protocols aim to encrypt DNS traffic, ensuring privacy, integrity, and security.
+The Domain Name System (DNS) is a critical part of the internet infrastructure, translating human-readable domain names into machine-readable IP addresses. Traditionally, DNS queries are transmitted over unencrypted UDP or TCP protocols, making them vulnerable to eavesdropping, tampering, and man-in-the-middle attacks. To address these security concerns, newer protocols such as **DNS Over TLS (DoT)**, **DNS Over HTTPS (DoH)**, and **DNS over mTLS** have been introduced. These protocols aim to encrypt DNS traffic, ensuring privacy, integrity, and security.
 
-This document explains the purpose, functioning, and benefits of DoT, DoH, and DNSCrypt, with visual diagrams to illustrate how they work.
+This document explains the purpose, functioning, and benefits of DoT, DoH, and DNS over mTLS, with visual diagrams to illustrate how they work.
 
 ## What is DNS Over TLS (DoT)?
 
