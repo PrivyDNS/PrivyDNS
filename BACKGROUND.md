@@ -140,4 +140,3 @@ DoT, DoH, and DNS over mTLS all offer enhanced security, privacy, and integrity 
 
 - [DNS Over TLS (DoT) RFC 7858](https://datatracker.ietf.org/doc/rfc7858/)
 - [DNS Over HTTPS (DoH) RFC 8484](https://datatracker.ietf.org/doc/rfc8484/)
-- [DNSCrypt Website](https://dnscrypt.info/)
